@@ -1,4 +1,4 @@
-const { ok, server_error } = require("../helpers/responses");
+const { ok, server_error, error_404 } = require("../helpers/responses");
 const school = require("../models/School");
 const jwt = require("jsonwebtoken");
 
@@ -64,8 +64,14 @@ module.exports = {
   },
 
   getAllSchools: async (req, res) => {
-    const findAllSchools = await school.find();
-    return ok(res, "", findAllSchools);
+    try {
+      const findAllSchools = await school
+        .find()
+        .populate({ path: "teachers", select: "-password" });
+      return ok(res, "", findAllSchools);
+    } catch (error) {
+      return error_404(res);
+    }
   },
 
   editSchool: async (req, res) => {

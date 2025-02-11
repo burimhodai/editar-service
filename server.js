@@ -12,7 +12,7 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 // MongoDB URI from .env
-const uri = process.env.DATABASE_URL || "your-mongodb-uri";
+const uri = process.env.DATABASE_URL;
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
@@ -31,7 +31,7 @@ if (cluster.isMaster) {
 
   app.use(
     cors({
-      origin: "http://localhost:5173", // Allow requests only from frontend
+      origin: "http://localhost:5173",
       methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true, // Allow cookies and authentication headers
     })
@@ -47,11 +47,13 @@ if (cluster.isMaster) {
   const teacherRouter = require("./routes/teacher");
   const parentRouter = require("./routes/parent");
   const studentRouter = require("./routes/student");
+  const subjectRouter = require("./routes/subject");
 
   app.use("/school", schoolRouter);
   app.use("/teacher", teacherRouter);
   app.use("/parent", parentRouter);
   app.use("/student", studentRouter);
+  app.use("/subject", subjectRouter);
 
   mongoose
     .connect(uri, {

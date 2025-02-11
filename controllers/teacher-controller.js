@@ -1,4 +1,5 @@
 const { ok, server_error } = require("../helpers/responses");
+const school = require("../models/School");
 const teacher = require("../models/Teacher");
 const jwt = require("jsonwebtoken");
 
@@ -38,7 +39,6 @@ module.exports = {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        headTeacher: req.body.headTeacher,
         school: req.body.school_id,
       });
 
@@ -54,8 +54,8 @@ module.exports = {
     const getTeacher = await teacher
       .findById(req.params.id)
       .select("-password")
-      .populate({ path: "school", select: "-password" })
-      .populate({ path: "subject" });
+      .populate({ path: "school", select: "-password" });
+    // .populate({ path: "subject" });
     return res.status(200).json({ data: getTeacher });
   },
 
@@ -75,16 +75,26 @@ module.exports = {
         name: req.body.name || findTeacherbyID.name,
         email: req.body.email || findTeacherbyID.email,
         password: req.body.password || findTeacherbyID.password,
+        school: req.body.school_id || findTeacherbyID.school,
       };
       await teacher.findByIdAndUpdate(findTeacherbyID._id, data);
-      return ok(res);
+      ok(res);
     } catch (error) {
-      return server_error(res);
+      server_error(res);
     }
   },
 
   getAllTeachers: async (req, res) => {
     const findAllTeachersbyID = await teacher.find();
-    return ok(res);
+    ok(res, "", findAllTeachersbyID);
+  },
+
+  getTeachersbySchoolID: async (req, res) => {
+    const foundSchools = await teacher
+      .find({
+        school: req.params.id,
+      })
+      .select("-password");
+    ok(res, "", foundSchools);
   },
 };
