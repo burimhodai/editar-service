@@ -46,10 +46,12 @@ if (cluster.isMaster) {
   const schoolRouter = require("./routes/school");
   const teacherRouter = require("./routes/teacher");
   const parentRouter = require("./routes/parent");
+  const studentRouter = require("./routes/student");
 
   app.use("/school", schoolRouter);
   app.use("/teacher", teacherRouter);
   app.use("/parent", parentRouter);
+  app.use("/student", studentRouter);
 
   mongoose
     .connect(uri, {

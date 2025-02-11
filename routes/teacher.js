@@ -5,6 +5,6 @@ router.post("/create", teacherController.createTeacher);
 router.post("/login", teacherController.loginTeacher);
 router.post("/delete/:id", teacherController.deleteTeacher);
 router.get("/:id", teacherController.getTeacherbyID);
-router.put("/edit", teacherController.editTeacher);
-
+router.post("/edit/:id", teacherController.editTeacher);
+router.post("/", teacherController.getAllTeachers);
 module.exports = router;

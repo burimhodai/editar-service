@@ -1,3 +1,4 @@
+const { ok, server_error } = require("../helpers/responses");
 const school = require("../models/School");
 const jwt = require("jsonwebtoken");
 
@@ -60,5 +61,29 @@ module.exports = {
       return res.status(404).json({ message: "Account doesn't exist" });
     }
     return res.status(200).json({ message: "Account successfully deleted" });
+  },
+
+  getAllSchools: async (req, res) => {
+    const findAllSchools = await school.find();
+    return ok(res, "", findAllSchools);
+  },
+
+  editSchool: async (req, res) => {
+    try {
+      const findSchoolbyID = await school.findById(req.params.id);
+
+      const data = {
+        name: req.body.name || findSchoolbyID.name,
+        location: req.body.location || findSchoolbyID.location,
+        email: req.body.email || findSchoolbyID.email,
+        password: req.body.password || findSchoolbyID.password,
+        logo: req.body.logo || findSchoolbyID.logo,
+      };
+      await school.findByIdAndUpdate(findSchoolbyID._id, data);
+      console.log(data);
+      return ok(res);
+    } catch (error) {
+      return server_error(res);
+    }
   },
 };

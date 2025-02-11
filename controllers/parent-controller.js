@@ -1,8 +1,14 @@
+const { server_error, error_404, ok } = require("../helpers/responses");
 const parent = require("../models/Parent");
 const child = require("../models/Student");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
+  getAllParents: async (req, res) => {
+    const getAll = await parent.find();
+    return ok(res, "", getAll);
+  },
+
   loginParent: async (req, res) => {
     const exists = await parent.findOne({ email: req.body.email });
 
@@ -15,7 +21,7 @@ module.exports = {
       return res.status(401).json({ message: "Invalid Password" });
     }
 
-    exist.password = undefined;
+    exists.password = undefined;
     const token = jwt.sign(
       { exists },
       "pl23kl123lamsdfejkjrk3@3lakslk0dl3erksa;"
@@ -42,6 +48,18 @@ module.exports = {
       });
 
       await newParent.save();
+
+      const data = {
+        parent: newParent._id,
+      };
+
+      await child.findOneAndUpdate(
+        {
+          birthNumber: req.body.birthNumber,
+        },
+        data
+      );
+
       return res.status(201).json({ message: "Account created successfully" });
     } catch (error) {
       console.error("Error creating account:", error);
@@ -60,10 +78,24 @@ module.exports = {
   deleteParent: async (req, res) => {
     const deleteParent = await parent.findByIdAndDelete(req.params.id);
     if (!deleteParent) {
-      return res.status(404).json({ message: "Parent account doesn't exist" });
+      error_404(res, "Account was not found");
     }
-    return res
-      .status(200)
-      .json({ message: "Parent account deleted successfully" });
+    ok(res, "Deleted Successfully");
+  },
+
+  editParent: async (req, res) => {
+    try {
+      const findParentbyID = await parent.findById(req.params.id);
+
+      const data = {
+        name: req.body.name || findParentbyID.name,
+        email: req.body.email || findParentbyID.email,
+        password: req.body.password || findParentbyID.password,
+      };
+
+      await parent.findByIdAndUpdate(findParentbyID._id, data);
+    } catch (error) {
+      server_error(res);
+    }
   },
 };

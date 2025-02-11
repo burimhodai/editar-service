@@ -5,6 +5,7 @@ router.post("/create", parentController.createParent);
 router.post("/login", parentController.loginParent);
 router.post("/delete/:id", parentController.deleteParent);
 router.get("/:id", parentController.getParentbyID);
-// router.put("/edit", schoolController.editSchool);
+router.put("/edit/:id", parentController.editParent);
+router.get("/", parentController.getAllParents);
 
 module.exports = router;
