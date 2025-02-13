@@ -6,7 +6,7 @@ const {
   ok,
 } = require("../helpers/responses");
 const subject = require("../models/Subject");
-const teacher = require("../models/Teacher");
+const student = require("../models/Student");
 
 module.exports = {
   createSubject: async (req, res) => {
@@ -94,17 +94,34 @@ module.exports = {
 
   assignStudentToSubject: async (req, res) => {
     try {
+      // First, assign the student to the subject
       const subjectAssign = await subject.findByIdAndUpdate(req.body.id, {
         $push: {
           students: req.params.id,
         },
       });
 
+      // Check if the subject was found and updated
       if (!subjectAssign) {
-        error_404(res);
+        return error_404(res);
       }
+
+      // Then, assign the subject to the student
+      const studentAssign = await student.findByIdAndUpdate(req.params.id, {
+        $push: {
+          subjects: req.body.id,
+        },
+      });
+
+      // Check if the student was found and updated
+      if (!studentAssign) {
+        return error_404(res);
+      }
+
+      // If both updates were successful
       ok(res);
     } catch (error) {
+      console.log(error);
       server_error(res);
     }
   },

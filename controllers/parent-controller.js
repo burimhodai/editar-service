@@ -60,6 +60,16 @@ module.exports = {
         data
       );
 
+      await parent.findByIdAndUpdate(
+        newParent._id,
+        {
+          $push: {
+            children: existsBirthNumber._id,
+          },
+        },
+        { new: true }
+      );
+
       return res.status(201).json({ message: "Account created successfully" });
     } catch (error) {
       console.error("Error creating account:", error);

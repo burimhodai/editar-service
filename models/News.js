@@ -1,16 +1,18 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-const newsSchema = new mongoose.Schema({
-
-    title:String,
+const newsSchema = new mongoose.Schema(
+  {
+    title: String,
     content: String,
     author: {
-        type:String,
-        enum: ["School", "Teacher"]
+      type: String,
+      enum: ["School", "Teacher"],
     },
+    school: { type: mongoose.Schema.Types.ObjectId, ref: "School" },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-}, {
-    timestamps:true
-})
-
-module.exports = mongoose.model("News", newsSchema)
+module.exports = mongoose.model("News", newsSchema);
