@@ -12,3 +12,8 @@ Setup:
 
 3. Start it
    npm start
+
+4. Install Postman or Insomnia
+   Now you can test the api.
+   in /routes you can find methods
+   in /controllers you are able to see what info you need to pass
