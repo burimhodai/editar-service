@@ -6,6 +6,8 @@ const {
 } = require("../helpers/responses");
 const Parent = require("../models/Parent");
 const Teacher = require("../models/Teacher");
+const Student = require("../models/Student");
+const School = require("../models/School");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
@@ -64,8 +66,7 @@ module.exports = {
       console.log(error);
       server_error(res);
     }
-  },
-  ////Teacher
+  }, ////Teacher
 
   createAccessTokenParent: async (req, res) => {
     try {
@@ -120,15 +121,14 @@ module.exports = {
     } catch (error) {
       server_error(res);
     }
-  },
-  ////Parent
+  }, ////Parent
 
   createAccessTokenStudent: async (req, res) => {
     try {
       const exists = await Student.findOne({ email: req.body.email });
 
       if (!exists) {
-        return res.status(404).json({ message: "Teacher account not found" });
+        return res.status(404).json({ message: "Student account not found" });
       }
 
       exists.password = undefined;
@@ -176,16 +176,14 @@ module.exports = {
     } catch (error) {
       server_error(res);
     }
-  },
-
-  ////Student
+  }, ////Student
 
   createAccessTokenSchool: async (req, res) => {
     try {
       const exists = await School.findOne({ email: req.body.email });
 
       if (!exists) {
-        return res.status(404).json({ message: "Teacher account not found" });
+        return res.status(404).json({ message: "School account not found" });
       }
 
       exists.password = undefined;
@@ -216,23 +214,24 @@ module.exports = {
 
       const id = decoded.exists._id;
 
-      const School = await School.findById(id);
+      // Fix: rename variable to lowercase 'school'
+      const school = await School.findById(id);
 
-      if (!School) {
+      if (!school) {
         unauthorized(res);
       }
 
-      School.password = undefined;
+      school.password = undefined;
 
       const refreshToken = jwt.sign(
-        { School },
+        { school }, // Use lowercase here too
         "pl23kl123lamsdfejkjrk3@3lakslk0dl3erksa;",
         { expiresIn: "1d" }
       );
       ok(res, "", refreshToken);
     } catch (error) {
+      console.log(error); // This should show the actual error
       server_error(res);
     }
-  },
-  //school
+  }, //school
 };
