@@ -7,8 +7,15 @@ const {
 } = require("../helpers/responses");
 const subject = require("../models/Subject");
 const student = require("../models/Student");
+const Teacher = require("../models/Teacher");
 
 module.exports = {
+  getAllSubjects: async (req, res) => {
+    const getAll = await subject.find({ school: req.params.id });
+
+    return res.status(200).json({ data: getAll });
+  },
+
   createSubject: async (req, res) => {
     try {
       const exists = await subject.findOne({
@@ -79,6 +86,7 @@ module.exports = {
 
   assignTeacherToSubject: async (req, res) => {
     try {
+      console.log(req.body.id);
       const subjectAssign = await subject.findByIdAndUpdate(req.body.id, {
         teacher: req.params.id,
       });
@@ -86,6 +94,16 @@ module.exports = {
       if (!subjectAssign) {
         error_404(res);
       }
+
+      const teacherUpdate = await Teacher.findByIdAndUpdate(req.params.id, {
+        $push: { subjects: req.body.id },
+      });
+
+      // If teacher update fails, send error
+      if (!teacherUpdate) {
+        return error_404(res);
+      }
+
       ok(res);
     } catch (error) {
       server_error(res);
@@ -94,31 +112,26 @@ module.exports = {
 
   assignStudentToSubject: async (req, res) => {
     try {
-      // First, assign the student to the subject
       const subjectAssign = await subject.findByIdAndUpdate(req.body.id, {
         $push: {
           students: req.params.id,
         },
       });
 
-      // Check if the subject was found and updated
       if (!subjectAssign) {
         return error_404(res);
       }
 
-      // Then, assign the subject to the student
       const studentAssign = await student.findByIdAndUpdate(req.params.id, {
         $push: {
           subjects: req.body.id,
         },
       });
 
-      // Check if the student was found and updated
       if (!studentAssign) {
         return error_404(res);
       }
 
-      // If both updates were successful
       ok(res);
     } catch (error) {
       console.log(error);

@@ -85,8 +85,8 @@ module.exports = {
   },
 
   getAllTeachers: async (req, res) => {
-    const findAllTeachersbyID = await teacher.find();
-    ok(res, "", findAllTeachersbyID);
+    const findAllTeachersbyID = await teacher.find({ school: req.params.id });
+    return res.status(200).json({ data: findAllTeachersbyID });
   },
 
   getTeachersbySchoolID: async (req, res) => {

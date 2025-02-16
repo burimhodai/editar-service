@@ -213,6 +213,7 @@ module.exports = {
       );
 
       console.log({ decoded });
+
       const id = decoded.exists._id;
 
       // Fix: rename variable to lowercase 'school'

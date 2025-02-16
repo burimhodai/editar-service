@@ -8,6 +8,7 @@ router.post("/delete/:id", schoolController.deleteSchool);
 router.get("/:id", schoolController.getSchoolbyID);
 router.get("/", schoolController.getAllSchools);
 router.post("/edit/:id", schoolController.editSchool);
+
 router.post("/createAccessToken/", authMiddleware.createAccessTokenSchool);
 router.post("/createRefreshToken/", authMiddleware.createRefreshTokenSchool);
 
