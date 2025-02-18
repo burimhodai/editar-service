@@ -6,7 +6,7 @@ const newsSchema = new mongoose.Schema(
     content: String,
     author: {
       type: String,
-      enum: ["School", "Teacher"],
+      enum: ["school", "teacher"],
     },
     school: { type: mongoose.Schema.Types.ObjectId, ref: "School" },
   },

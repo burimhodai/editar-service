@@ -95,6 +95,14 @@ module.exports = {
         error_404(res);
       }
 
+      const id = req.body.id;
+      const isAssigned = await Teacher.findOne().where("subjects").in([id]);
+
+      console.log(isAssigned);
+      if (isAssigned) {
+        error_404(res, "Subject already assigned");
+      }
+
       const teacherUpdate = await Teacher.findByIdAndUpdate(req.params.id, {
         $push: { subjects: req.body.id },
       });

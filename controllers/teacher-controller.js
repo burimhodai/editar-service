@@ -39,9 +39,10 @@ module.exports = {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        school: req.body.school_id,
+        school: req.body.school, // Changed from school_id to school
       });
 
+      console.log(req.body);
       await newTeacher.save();
       return res.status(201).json({ message: "Success" });
     } catch (error) {
@@ -93,6 +94,10 @@ module.exports = {
     const foundSchools = await teacher
       .find({
         school: req.params.id,
+      })
+      .populate({
+        path: "subjects", // The field to populate
+        select: "name", // Only include the 'name' field from the Subject model
       })
       .select("-password");
     ok(res, "", foundSchools);

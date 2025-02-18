@@ -23,7 +23,7 @@ module.exports = {
 
   getNews: async (req, res) => {
     try {
-      const news = await News.find().populate({
+      const news = await News.find({ school: req.params.id }).populate({
         path: "school",
         select: "name",
       });
