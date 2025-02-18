@@ -92,7 +92,7 @@ module.exports = {
       });
 
       if (!subjectAssign) {
-        error_404(res);
+        return error_404(res);
       }
 
       const id = req.body.id;
@@ -100,7 +100,7 @@ module.exports = {
 
       console.log(isAssigned);
       if (isAssigned) {
-        error_404(res, "Subject already assigned");
+        return error_404(res, "Subject already assigned");
       }
 
       const teacherUpdate = await Teacher.findByIdAndUpdate(req.params.id, {

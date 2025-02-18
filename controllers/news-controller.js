@@ -14,6 +14,7 @@ module.exports = {
         author,
       });
 
+      console.log({ NEWSDATA: req.body });
       await createdNews.save();
       created(res, "", createdNews);
     } catch (error) {
