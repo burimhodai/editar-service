@@ -66,7 +66,7 @@ module.exports = {
         },
       });
 
-      return res.status(201).json({ message: "Account created successfully" });
+      return res.status(201).json({ message: "Parent created successfully" });
     } catch (error) {
       console.error("Error creating account:", error);
       return res.status(500).json({ message: "Internal Server Error" });

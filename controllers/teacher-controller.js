@@ -39,7 +39,7 @@ module.exports = {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        school: req.body.school, // Changed from school_id to school
+        school: req.body.school,
       });
 
       console.log(req.body);

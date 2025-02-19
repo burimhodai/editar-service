@@ -2,15 +2,24 @@ const teacher = require("../models/Teacher");
 const school = require("../models/School");
 const student = require("../models/Student");
 const jwt = require("jsonwebtoken");
-const { server_error } = require("../helpers/responses");
+const { server_error, ok } = require("../helpers/responses");
 
 module.exports = {
-  getAllStudents: async (req, res) => {
-    const getAll = await student.find();
+  getAllStudentsbySchoolID: async (req, res) => {
+    try {
+      const students = await student
+        .find({ school: req.query.id })
+        .populate({ path: "subjects", select: "name" })
+        .populate({ path: "parent", select: "name email" })
+        .select("-password");
 
-    return res.status(200).json({ data: getAll });
+      return res.status(200).json({ data: students });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Server error", error: error.message });
+    }
   },
-
   createStudent: async (req, res) => {
     try {
       const exists = await student.findOne({ email: req.body.email });
@@ -24,6 +33,7 @@ module.exports = {
         birthNumber: req.body.birthNumber,
         password: req.body.password,
         gradeLevel: req.body.gradeLevel,
+        school: req.body.school,
       });
 
       await newStudent.save();
@@ -55,12 +65,12 @@ module.exports = {
     return res.status(200).json({ message: "Login successful", data: token });
   },
 
-  getStudentbyID: async (req, res) => {
-    const getStudentbyID = await student
-      .findById(req.params.id)
-      .select("-password");
-    return res.status(200).json({ data: getStudentbyID });
-  },
+  // getStudentbyID: async (req, res) => {
+  //   const getStudentbyID = await student
+  //     .findById(req.params.id)
+  //     .select("-password");
+  //   return res.status(200).json({ data: getStudentbyID });
+  // },
 
   deleteStudent: async (req, res) => {
     const deleteStudent = await student.findByIdAndDelete(req.params.id);
@@ -91,7 +101,7 @@ module.exports = {
       };
 
       await student.findByIdAndUpdate(findStudentbyID._id, data);
-      return res.status(200).json({ message: "Changes successfulyl edited." });
+      return res.status(200).json({ message: "Changes successfully edited." });
     } catch (error) {
       return server_error(res);
     }
