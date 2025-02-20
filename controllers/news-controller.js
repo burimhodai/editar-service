@@ -24,10 +24,12 @@ module.exports = {
 
   getNews: async (req, res) => {
     try {
-      const news = await News.find({ school: req.params.id }).populate({
-        path: "school",
-        select: "name",
-      });
+      const news = await News.find({ school: req.params.id })
+        .populate({
+          path: "school",
+          select: "name",
+        })
+        .sort({ createdAt: "desc" });
       ok(res, "", news);
     } catch (error) {
       server_error(res);

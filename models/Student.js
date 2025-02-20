@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
-const studentSchema = new mongoose.Schema({
+const studentSchema = new mongoose.Schema(
+  {
     name: String,
     email: String,
     birthNumber: String,
@@ -9,7 +10,9 @@ const studentSchema = new mongoose.Schema({
     subjects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subject" }],
     parent: { type: mongoose.Schema.Types.ObjectId, ref: "Parent" },
     school: { type: mongoose.Schema.Types.ObjectId, ref: "School" },
-    accessLevel: { type: String, default: "student" } // Can view grades, subjects, news
-});
+    accessLevel: { type: String, default: "student" }, // Can view grades, subjects, news
+  },
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("Student", studentSchema);
