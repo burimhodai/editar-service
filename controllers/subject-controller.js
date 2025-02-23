@@ -10,8 +10,11 @@ const student = require("../models/Student");
 const Teacher = require("../models/Teacher");
 
 module.exports = {
+  //sschool id
   getAllSubjects: async (req, res) => {
-    const getAll = await subject.find({ school: req.params.id });
+    const getAll = await subject
+      .find({ school: req.params.id })
+      .populate("teacher");
 
     return res.status(200).json({ data: getAll });
   },

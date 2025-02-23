@@ -1,8 +1,56 @@
 const { ok, server_error, error_404 } = require("../helpers/responses");
 const school = require("../models/School");
 const jwt = require("jsonwebtoken");
+const Teacher = require("../models/Teacher");
+const Student = require("../models/Student");
+const Parent = require("../models/Parent");
+const Subject = require("../models/Subject");
 
 module.exports = {
+  schoolOverview: async (req, res) => {
+    try {
+      console.log(req.params);
+      const parentID = await Student.find({ school: req.params.id }).select(
+        "parent"
+      );
+
+      let parents = [];
+
+      for (const id of parentID) {
+        console.log(id);
+        parents.push(await Parent.findById(id.parent));
+      }
+
+      console.log({ parents: parents.filter(Boolean) });
+
+      const studentsNumber = await Student.countDocuments({
+        school: req.params.id,
+      });
+      const teachersNumber = await Teacher.countDocuments({
+        school: req.params.id,
+      });
+      const parentsNumber = parents.filter(Boolean).length;
+      const subjectsNumber = await Subject.countDocuments({
+        school: req.params.id,
+      });
+
+      console.log({
+        studentsNumber,
+        teachersNumber,
+        parentsNumber,
+        subjectsNumber,
+      });
+      ok(res, "", {
+        studentsNumber,
+        teachersNumber,
+        parentsNumber,
+        subjectsNumber,
+      });
+    } catch (error) {
+      server_error(res, error.message);
+    }
+  },
+
   loginSchool: async (req, res) => {
     const exists = await school.findOne({ email: req.body.email });
 
